@@ -13,6 +13,7 @@ using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 
 namespace SourceGit.ViewModels
 {
@@ -297,9 +298,25 @@ namespace SourceGit.ViewModels
             get => _onlySearchCommitsInCurrentBranch;
             set
             {
-                if (SetProperty(ref _onlySearchCommitsInCurrentBranch, value) && !string.IsNullOrEmpty(_searchCommitFilter))
-                    StartSearchCommits();
+                if (SetProperty(ref _onlySearchCommitsInCurrentBranch, value))
+                {
+                    // 重置byFileName搜索的状态
+                    if (_searchCommitFilterType == (int)Models.CommitSearchMethod.ByFileName)
+                    {
+                        _fileNameSearchSkip = 0;
+                        CanContinueFileNameSearch = false;
+                    }
+                    
+                    if (!string.IsNullOrEmpty(_searchCommitFilter))
+                        StartSearchCommits();
+                }
             }
+        }
+
+        public bool CanContinueFileNameSearch
+        {
+            get => _canContinueFileNameSearch;
+            private set => SetProperty(ref _canContinueFileNameSearch, value);
         }
 
         public int SearchCommitFilterType
@@ -309,6 +326,13 @@ namespace SourceGit.ViewModels
             {
                 if (SetProperty(ref _searchCommitFilterType, value))
                 {
+                    // 重置byFileName搜索的状态
+                    if (value != (int)Models.CommitSearchMethod.ByFileName)
+                    {
+                        _fileNameSearchSkip = 0;
+                        CanContinueFileNameSearch = false;
+                    }
+                    
                     CalcWorktreeFilesForSearching();
                     if (!string.IsNullOrEmpty(_searchCommitFilter))
                         StartSearchCommits();
@@ -321,8 +345,18 @@ namespace SourceGit.ViewModels
             get => _searchCommitFilter;
             set
             {
-                if (SetProperty(ref _searchCommitFilter, value) && IsSearchingCommitsByFilePath())
-                    CalcMatchedFilesForSearching();
+                if (SetProperty(ref _searchCommitFilter, value))
+                {
+                    // 重置byFileName搜索的状态
+                    if (_searchCommitFilterType == (int)Models.CommitSearchMethod.ByFileName)
+                    {
+                        _fileNameSearchSkip = 0;
+                        CanContinueFileNameSearch = false;
+                    }
+                    
+                    if (IsSearchingCommitsByFilePath())
+                        CalcMatchedFilesForSearching();
+                }
             }
         }
 
@@ -347,6 +381,8 @@ namespace SourceGit.ViewModels
                     NavigateToCommit(value.SHA);
             }
         }
+
+        public RelayCommand ContinueFileNameSearchCommand { get; }
 
         public bool IsLocalBranchGroupExpanded
         {
@@ -468,6 +504,7 @@ namespace SourceGit.ViewModels
             IsBare = isBare;
             FullPath = path;
             GitDir = gitDir;
+            ContinueFileNameSearchCommand = new RelayCommand(ContinueFileNameSearch);
         }
 
         public void Open()
@@ -916,6 +953,13 @@ namespace SourceGit.ViewModels
             SelectedSearchedCommit = null;
             MatchedFilesForSearching = null;
 
+            // 重置byFileName搜索的skip计数器
+            if (_searchCommitFilterType == (int)Models.CommitSearchMethod.ByFileName)
+            {
+                _fileNameSearchSkip = 0;
+                CanContinueFileNameSearch = false;
+            }
+
             Task.Run(async () =>
             {
                 var visible = new List<Models.Commit>();
@@ -937,15 +981,52 @@ namespace SourceGit.ViewModels
                 }
                 else
                 {
-                    visible = await new Commands.QueryCommits(_fullpath, _searchCommitFilter, method, _onlySearchCommitsInCurrentBranch)
-                        .GetResultAsync()
-                        .ConfigureAwait(false);
+                    var queryCommits = new Commands.QueryCommits(_fullpath, _searchCommitFilter, method, _onlySearchCommitsInCurrentBranch, _fileNameSearchSkip);
+                    visible = await queryCommits.GetResultAsync().ConfigureAwait(false);
+
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        SearchedCommits = visible;
+                        IsSearchLoadingVisible = false;
+                        
+                        // 如果是byFileName搜索且原始查询返回了1000条日志，说明可能还有更多
+                        if (method == Models.CommitSearchMethod.ByFileName && queryCommits.TotalLogCount >= 1000)
+                        {
+                            CanContinueFileNameSearch = true;
+                        }
+                    });
                 }
+            });
+        }
+
+        public void ContinueFileNameSearch()
+        {
+            if (_histories == null || _searchCommitFilterType != (int)Models.CommitSearchMethod.ByFileName)
+                return;
+
+            IsSearchLoadingVisible = true;
+            _fileNameSearchSkip += 1000;
+
+            Task.Run(async () =>
+            {
+                var method = (Models.CommitSearchMethod)_searchCommitFilterType;
+                var queryCommits = new Commands.QueryCommits(_fullpath, _searchCommitFilter, method, _onlySearchCommitsInCurrentBranch, _fileNameSearchSkip);
+                var newCommits = await queryCommits.GetResultAsync().ConfigureAwait(false);
 
                 Dispatcher.UIThread.Post(() =>
                 {
-                    SearchedCommits = visible;
+                    // 将新的提交添加到现有列表中
+                    var allCommits = new List<Models.Commit>(_searchedCommits);
+                    allCommits.AddRange(newCommits);
+                    SearchedCommits = allCommits;
+
                     IsSearchLoadingVisible = false;
+
+                    // 如果原始查询返回的日志少于1000条，说明已经到达末尾
+                    if (queryCommits.TotalLogCount < 1000)
+                    {
+                        CanContinueFileNameSearch = false;
+                    }
                 });
             });
         }
@@ -3175,6 +3256,8 @@ namespace SourceGit.ViewModels
         private bool _requestingWorktreeFiles = false;
         private List<string> _worktreeFiles = null;
         private List<string> _matchedFilesForSearching = null;
+        private int _fileNameSearchSkip = 0;
+        private bool _canContinueFileNameSearch = false;
 
         private string _filter = string.Empty;
         private readonly Lock _lockRemotes = new();

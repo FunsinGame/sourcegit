@@ -528,6 +528,18 @@
                     IsVisible="{Binding SearchCommitFilterType, Converter={x:Static c:IntConverters.IsGreaterThanZero}}">
             <TextBlock Text="{DynamicResource Text.Repository.Search.InCurrentBranch}"/>
           </CheckBox>
+
+          <Button Height="24"
+                   Margin="12,0,0,0"
+                   Padding="8,0"
+                   Background="Transparent"
+                   BorderThickness="1"
+                   BorderBrush="{DynamicResource Brush.Border2}"
+                   CornerRadius="4"
+                   Command="{Binding ContinueFileNameSearchCommand}"
+                   IsVisible="{Binding CanContinueFileNameSearch}">
+            <TextBlock Text="{DynamicResource Text.Repository.Search.ContinueFindByFileName}" FontSize="12"/>
+          </Button>
         </StackPanel>
 
         <ListBox Grid.Row="2"

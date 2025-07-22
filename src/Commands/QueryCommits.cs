@@ -14,6 +14,10 @@ namespace SourceGit.Commands
         private bool _isHeadFound = false;
         private string _fileNameFilter = string.Empty;
         private Models.CommitSearchMethod _method;
+        private int _skip = 0;
+        private int _totalLogCount = 0; // 记录原始查询的日志数量
+
+        public int TotalLogCount => _totalLogCount;
 
         public QueryCommits(string repo, string limits, bool needFindHead = true)
         {
@@ -23,11 +27,12 @@ namespace SourceGit.Commands
             _findFirstMerged = needFindHead;
         }
 
-        public QueryCommits(string repo, string filter, Models.CommitSearchMethod method, bool onlyCurrentBranch)
+        public QueryCommits(string repo, string filter, Models.CommitSearchMethod method, bool onlyCurrentBranch, int skip = 0)
         {
             string search = onlyCurrentBranch ? string.Empty : "--branches --remotes ";
-
             _method = method;
+            _skip = skip;
+            
             if (method == Models.CommitSearchMethod.ByAuthor)
             {
                 search += $"-i --author={filter.Quoted()}";
@@ -65,7 +70,17 @@ namespace SourceGit.Commands
 
             WorkingDirectory = repo;
             Context = repo;
-            Args = $"log -1000 --date-order --no-show-signature --decorate=full --format=%H%n%P%n%D%n%aN±%aE%n%at%n%cN±%cE%n%ct%n%s {search}";
+            
+            // 为byFileName方法添加skip参数支持
+            if (method == Models.CommitSearchMethod.ByFileName && skip > 0)
+            {
+                Args = $"log -1000 --skip={skip} --date-order --no-show-signature --decorate=full --format=%H%n%P%n%D%n%aN±%aE%n%at%n%cN±%cE%n%ct%n%s {search}";
+            }
+            else
+            {
+                Args = $"log -1000 --date-order --no-show-signature --decorate=full --format=%H%n%P%n%D%n%aN±%aE%n%at%n%cN±%cE%n%ct%n%s {search}";
+            }
+            
             _findFirstMerged = false;
         }
 
@@ -170,12 +185,15 @@ namespace SourceGit.Commands
             int nextPartIdx = 0;
             bool hasMatchingFile = false;
             bool inCommitInfo = false;
+            _totalLogCount = 0; 
 
             foreach (var line in lines)
             {
                 // 新的 commit 开始
                 if (!inCommitInfo && line.Length == 40 && Regex.IsMatch(line, "^[a-fA-F0-9]+$"))
                 {
+                    _totalLogCount++; // 统计原始日志数量
+                    
                     if (currentCommit != null && hasMatchingFile)
                     {
                         commits.Add(currentCommit);
@@ -211,7 +229,8 @@ namespace SourceGit.Commands
                 {
                     if (!string.IsNullOrEmpty(line) && currentCommit != null && !string.IsNullOrEmpty(_fileNameFilter))
                     {
-                        if (line.Contains(_fileNameFilter, StringComparison.OrdinalIgnoreCase))
+                        string fileName = Path.GetFileName(line);
+                        if (fileName.Contains(_fileNameFilter, StringComparison.OrdinalIgnoreCase))
                             hasMatchingFile = true;
                     }
                 }
