@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Text.RegularExpressions;
@@ -14,7 +15,6 @@ namespace SourceGit.Commands
         private bool _isHeadFound = false;
         private string _fileNameFilter = string.Empty;
         private Models.CommitSearchMethod _method;
-        private int _skip = 0;
         private int _totalLogCount = 0; // 记录原始查询的日志数量
 
         public int TotalLogCount => _totalLogCount;
@@ -31,7 +31,6 @@ namespace SourceGit.Commands
         {
             string search = onlyCurrentBranch ? string.Empty : "--branches --remotes ";
             _method = method;
-            _skip = skip;
             
             if (method == Models.CommitSearchMethod.ByAuthor)
             {

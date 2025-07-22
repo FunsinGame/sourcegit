@@ -1,0 +1,47 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = crlf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{cs,vb}]
+indent_style = space
+indent_size = 4
+
+# 抑制不必要的using指令警告
+dotnet_style_unnecessary_using_directive = false:warning
+dotnet_style_unnecessary_using_directive_in_global_namespace = false:warning
+
+# 抑制其他常见的代码风格警告
+dotnet_style_qualification_for_field = false:warning
+dotnet_style_qualification_for_property = false:warning
+dotnet_style_qualification_for_method = false:warning
+dotnet_style_qualification_for_event = false:warning
+dotnet_style_predefined_type_for_locals_parameters_members = false:warning
+dotnet_style_predefined_type_for_member_access = false:warning
+
+[*.{csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj}]
+indent_style = space
+indent_size = 2
+
+[*.{props,targets,ruleset,config,nuspec,resx,vsixmanifest,vsct}]
+indent_style = space
+indent_size = 2
+
+[*.{json,js,ts,jsx,tsx}]
+indent_style = space
+indent_size = 2
+
+[*.{xml,csproj,vbproj,vcxproj,vcxproj.filters,proj,projitems,shproj,vsixmanifest,vsct}]
+indent_style = space
+indent_size = 2
+
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
+
+[*.{md,txt}]
+indent_style = space
+indent_size = 2 
