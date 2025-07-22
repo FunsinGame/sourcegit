@@ -42,12 +42,12 @@ namespace SourceGit.Views
 
         private void StartAnim()
         {
-            Content = new Path() { Classes = { "rotating" } };
+            Content = new Avalonia.Controls.Shapes.Path() { Classes = { "rotating" } };
         }
 
         private void StopAnim()
         {
-            if (Content is Path path)
+            if (Content is Avalonia.Controls.Shapes.Path path)
                 path.Classes.Clear();
 
             Content = null;

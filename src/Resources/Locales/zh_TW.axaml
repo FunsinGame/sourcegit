@@ -670,6 +670,7 @@
   <x:String x:Key="Text.Repository.Search.ByContent" xml:space="preserve">變更內容</x:String>
   <x:String x:Key="Text.Repository.Search.ByMessage" xml:space="preserve">提交訊息</x:String>
   <x:String x:Key="Text.Repository.Search.ByPath" xml:space="preserve">路徑</x:String>
+  <x:String x:Key="Text.Repository.Search.ByFileName" xml:space="preserve">檔案名稱</x:String>
   <x:String x:Key="Text.Repository.Search.BySHA" xml:space="preserve">提交編號</x:String>
   <x:String x:Key="Text.Repository.Search.InCurrentBranch" xml:space="preserve">僅搜尋目前分支</x:String>
   <x:String x:Key="Text.Repository.ShowDecoratedCommitsOnly" xml:space="preserve">只顯示分支和標籤引用的提交</x:String>

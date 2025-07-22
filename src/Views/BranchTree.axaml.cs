@@ -73,7 +73,7 @@ namespace SourceGit.Views
             if (this.FindResource(iconKey) is not StreamGeometry geo)
                 return;
 
-            var path = new Path()
+            var path = new Avalonia.Controls.Shapes.Path()
             {
                 Width = 12,
                 Height = 12,

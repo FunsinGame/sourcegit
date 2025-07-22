@@ -670,6 +670,7 @@
   <x:String x:Key="Text.Repository.Search.ByContent" xml:space="preserve">Содержимое</x:String>
   <x:String x:Key="Text.Repository.Search.ByMessage" xml:space="preserve">Сообщение</x:String>
   <x:String x:Key="Text.Repository.Search.ByPath" xml:space="preserve">Путь</x:String>
+  <x:String x:Key="Text.Repository.Search.ByFileName" xml:space="preserve">Имя файла</x:String>
   <x:String x:Key="Text.Repository.Search.BySHA" xml:space="preserve">SHA</x:String>
   <x:String x:Key="Text.Repository.Search.InCurrentBranch" xml:space="preserve">Текущая ветка</x:String>
   <x:String x:Key="Text.Repository.ShowDecoratedCommitsOnly" xml:space="preserve">Только оформленные ревизии</x:String>

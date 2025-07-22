@@ -670,6 +670,7 @@
   <x:String x:Key="Text.Repository.Search.ByContent" xml:space="preserve">Inhalt</x:String>
   <x:String x:Key="Text.Repository.Search.ByMessage" xml:space="preserve">Commit-Nachricht</x:String>
   <x:String x:Key="Text.Repository.Search.ByPath" xml:space="preserve">Pfad</x:String>
+  <x:String x:Key="Text.Repository.Search.ByFileName" xml:space="preserve">Dateiname</x:String>
   <x:String x:Key="Text.Repository.Search.BySHA" xml:space="preserve">SHA</x:String>
   <x:String x:Key="Text.Repository.Search.InCurrentBranch" xml:space="preserve">Aktueller Branch</x:String>
   <x:String x:Key="Text.Repository.ShowDecoratedCommitsOnly" xml:space="preserve">Nur dekorierte Commits</x:String>

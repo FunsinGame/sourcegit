@@ -563,6 +563,8 @@
   <x:String x:Key="Text.Repository.Search.ByAuthor" xml:space="preserve">著者</x:String>
   <x:String x:Key="Text.Repository.Search.ByCommitter" xml:space="preserve">コミッター</x:String>
   <x:String x:Key="Text.Repository.Search.ByMessage" xml:space="preserve">メッセージ</x:String>
+  <x:String x:Key="Text.Repository.Search.ByPath" xml:space="preserve">パス</x:String>
+  <x:String x:Key="Text.Repository.Search.ByFileName" xml:space="preserve">ファイル名</x:String>
   <x:String x:Key="Text.Repository.Search.BySHA" xml:space="preserve">SHA</x:String>
   <x:String x:Key="Text.Repository.Search.InCurrentBranch" xml:space="preserve">現在のブランチ</x:String>
   <x:String x:Key="Text.Repository.ShowTagsAsTree" xml:space="preserve">タグをツリーとして表示</x:String>

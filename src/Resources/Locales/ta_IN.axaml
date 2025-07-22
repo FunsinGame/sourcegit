@@ -564,6 +564,8 @@
   <x:String x:Key="Text.Repository.Search.ByAuthor" xml:space="preserve">ஆசிரியர்</x:String>
   <x:String x:Key="Text.Repository.Search.ByCommitter" xml:space="preserve">உறுதிமொழியாளர்</x:String>
   <x:String x:Key="Text.Repository.Search.ByMessage" xml:space="preserve">செய்தி</x:String>
+  <x:String x:Key="Text.Repository.Search.ByPath" xml:space="preserve">பாதை</x:String>
+  <x:String x:Key="Text.Repository.Search.ByFileName" xml:space="preserve">கோப்பு பெயர்</x:String>
   <x:String x:Key="Text.Repository.Search.BySHA" xml:space="preserve">பாகொவ</x:String>
   <x:String x:Key="Text.Repository.Search.InCurrentBranch" xml:space="preserve">தற்போதைய கிளை</x:String>
   <x:String x:Key="Text.Repository.ShowTagsAsTree" xml:space="preserve">குறிச்சொற்களை மரமாகக் காட்டு</x:String>

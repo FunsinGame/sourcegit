@@ -515,6 +515,8 @@
   <x:String x:Key="Text.Repository.Search.ByAuthor" xml:space="preserve">Autor</x:String>
   <x:String x:Key="Text.Repository.Search.ByCommitter" xml:space="preserve">Committer</x:String>
   <x:String x:Key="Text.Repository.Search.ByMessage" xml:space="preserve">Mensagem</x:String>
+  <x:String x:Key="Text.Repository.Search.ByPath" xml:space="preserve">Caminho</x:String>
+  <x:String x:Key="Text.Repository.Search.ByFileName" xml:space="preserve">Nome do arquivo</x:String>
   <x:String x:Key="Text.Repository.Search.BySHA" xml:space="preserve">SHA</x:String>
   <x:String x:Key="Text.Repository.Search.InCurrentBranch" xml:space="preserve">Branch Atual</x:String>
   <x:String x:Key="Text.Repository.ShowTagsAsTree" xml:space="preserve">Exibir Tags como Árvore</x:String>

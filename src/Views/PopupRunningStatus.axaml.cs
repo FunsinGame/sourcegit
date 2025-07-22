@@ -51,13 +51,13 @@ namespace SourceGit.Views
 
         private void StartAnim()
         {
-            Icon.Content = new Path() { Classes = { "waiting" } };
+            Icon.Content = new Avalonia.Controls.Shapes.Path() { Classes = { "waiting" } };
             ProgressBar.IsIndeterminate = true;
         }
 
         private void StopAnim()
         {
-            if (Icon.Content is Path path)
+            if (Icon.Content is Avalonia.Controls.Shapes.Path path)
                 path.Classes.Clear();
             Icon.Content = null;
             ProgressBar.IsIndeterminate = false;

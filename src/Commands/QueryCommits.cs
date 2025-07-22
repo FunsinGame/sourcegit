@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
 
 namespace SourceGit.Commands
 {
@@ -43,6 +44,12 @@ namespace SourceGit.Commands
             {
                 search += $"-- {filter.Quoted()}";
             }
+            else if (method == Models.CommitSearchMethod.ByFileName)
+            {
+                // 使用 --name-only 来获取文件列表，使用自定义格式
+                search += $"--name-only --format=%H%n%P%n%D%n%aN±%aE%n%at%n%cN±%cE%n%ct%n%s%n";
+                _fileNameFilter = filter;
+            }
             else
             {
                 search = $"-G{filter.Quoted()}";
@@ -60,6 +67,12 @@ namespace SourceGit.Commands
             if (!rs.IsSuccess)
                 return _commits;
 
+            // 检查是否使用了 --name-only 选项（ByFileName 方法）
+            if (Args.Contains("--name-only"))
+            {
+                return ParseWithNameOnlyAsync(rs.StdOut);
+            }
+
             var nextPartIdx = 0;
             var start = 0;
             var end = rs.StdOut.IndexOf('\n', start);
@@ -73,7 +86,7 @@ namespace SourceGit.Commands
                         _commits.Add(_current);
                         break;
                     case 1:
-                        ParseParent(line);
+                        ParseParent(line, _current);
                         break;
                     case 2:
                         _current.ParseDecorators(line);
@@ -113,12 +126,12 @@ namespace SourceGit.Commands
             return _commits;
         }
 
-        private void ParseParent(string data)
+        private void ParseParent(string data, Models.Commit commit)
         {
             if (data.Length < 8)
                 return;
 
-            _current.Parents.AddRange(data.Split(' ', StringSplitOptions.RemoveEmptyEntries));
+            commit.Parents.AddRange(data.Split(' ', StringSplitOptions.RemoveEmptyEntries));
         }
 
         private async Task MarkFirstMergedAsync()
@@ -142,9 +155,67 @@ namespace SourceGit.Commands
             }
         }
 
+        private List<Models.Commit> ParseWithNameOnlyAsync(string output)
+        {
+            var commits = new List<Models.Commit>();
+            var lines = output.Split('\n');
+            Models.Commit currentCommit = null;
+            int nextPartIdx = 0;
+            bool hasMatchingFile = false;
+            bool inCommitInfo = false;
+
+            foreach (var line in lines)
+            {
+                // 新的 commit 开始
+                if (!inCommitInfo && line.Length == 40 && Regex.IsMatch(line, "^[a-fA-F0-9]+$"))
+                {
+                    if (currentCommit != null && hasMatchingFile)
+                        commits.Add(currentCommit);
+
+                    currentCommit = new Models.Commit();
+                    currentCommit.SHA = line;
+                    nextPartIdx = 1;
+                    hasMatchingFile = false;
+                    inCommitInfo = true;
+                    continue;
+                }
+
+                // 填充 commit 字段
+                if (inCommitInfo && nextPartIdx < 8)
+                {
+                    switch (nextPartIdx)
+                    {
+                        case 1: ParseParent(line, currentCommit); break;
+                        case 2: currentCommit.ParseDecorators(line); break;
+                        case 3: currentCommit.Author = Models.User.FindOrAdd(line); break;
+                        case 4: currentCommit.AuthorTime = ulong.Parse(line); break;
+                        case 5: currentCommit.Committer = Models.User.FindOrAdd(line); break;
+                        case 6: currentCommit.CommitterTime = ulong.Parse(line); break;
+                        case 7: currentCommit.Subject = line; inCommitInfo = false; break;
+                    }
+                    nextPartIdx++;
+                }
+                else
+                {
+                    if (!string.IsNullOrEmpty(line) && currentCommit != null && !string.IsNullOrEmpty(_fileNameFilter))
+                    {
+                        if (line.Contains(_fileNameFilter, StringComparison.OrdinalIgnoreCase))
+                            hasMatchingFile = true;
+                    }
+                }
+            }
+
+            // 处理最后一个 commit
+            if (currentCommit != null && hasMatchingFile)
+                commits.Add(currentCommit);
+
+            return commits;
+        }
+
         private List<Models.Commit> _commits = new List<Models.Commit>();
         private Models.Commit _current = null;
         private bool _findFirstMerged = false;
         private bool _isHeadFound = false;
+        private string _fileNameFilter = string.Empty;
     }
 }
