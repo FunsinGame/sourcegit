@@ -8,6 +8,13 @@ namespace SourceGit.Commands
 {
     public class QueryCommits : Command
     {
+        private List<Models.Commit> _commits = new List<Models.Commit>();
+        private Models.Commit _current = null;
+        private bool _findFirstMerged = false;
+        private bool _isHeadFound = false;
+        private string _fileNameFilter = string.Empty;
+        private Models.CommitSearchMethod _method;
+
         public QueryCommits(string repo, string limits, bool needFindHead = true)
         {
             WorkingDirectory = repo;
@@ -20,6 +27,7 @@ namespace SourceGit.Commands
         {
             string search = onlyCurrentBranch ? string.Empty : "--branches --remotes ";
 
+            _method = method;
             if (method == Models.CommitSearchMethod.ByAuthor)
             {
                 search += $"-i --author={filter.Quoted()}";
@@ -67,8 +75,7 @@ namespace SourceGit.Commands
             if (!rs.IsSuccess)
                 return _commits;
 
-            // 检查是否使用了 --name-only 选项（ByFileName 方法）
-            if (Args.Contains("--name-only"))
+            if (_method == Models.CommitSearchMethod.ByFileName)
             {
                 return ParseWithNameOnlyAsync(rs.StdOut);
             }
@@ -159,7 +166,7 @@ namespace SourceGit.Commands
         {
             var commits = new List<Models.Commit>();
             var lines = output.Split('\n');
-            Models.Commit currentCommit = null;
+            Models.Commit currentCommit = new Models.Commit();
             int nextPartIdx = 0;
             bool hasMatchingFile = false;
             bool inCommitInfo = false;
@@ -170,10 +177,15 @@ namespace SourceGit.Commands
                 if (!inCommitInfo && line.Length == 40 && Regex.IsMatch(line, "^[a-fA-F0-9]+$"))
                 {
                     if (currentCommit != null && hasMatchingFile)
+                    {
                         commits.Add(currentCommit);
+                        currentCommit = new Models.Commit();
+                    }
 
-                    currentCommit = new Models.Commit();
                     currentCommit.SHA = line;
+                    currentCommit.Parents.Clear();
+                    currentCommit.Decorators.Clear();
+
                     nextPartIdx = 1;
                     hasMatchingFile = false;
                     inCommitInfo = true;
@@ -211,11 +223,5 @@ namespace SourceGit.Commands
 
             return commits;
         }
-
-        private List<Models.Commit> _commits = new List<Models.Commit>();
-        private Models.Commit _current = null;
-        private bool _findFirstMerged = false;
-        private bool _isHeadFound = false;
-        private string _fileNameFilter = string.Empty;
     }
 }
