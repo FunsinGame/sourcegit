@@ -291,6 +291,26 @@ namespace SourceGit.ViewModels
                 e.Handled = true;
             };
 
+            var copyFileName = new MenuItem();
+            copyFileName.Header = App.Text("CopyFileName");
+            copyFileName.Icon = App.CreateMenuIcon("Icons.Copy");
+            copyFileName.Click += async (_, e) =>
+            {
+                var fileName = Path.GetFileName(change.Path);
+                await App.CopyTextAsync(fileName);
+                e.Handled = true;
+            };
+
+            var copyFileNameWithoutExt = new MenuItem();
+            copyFileNameWithoutExt.Header = App.Text("CopyFileNameWithoutExt");
+            copyFileNameWithoutExt.Icon = App.CreateMenuIcon("Icons.Copy");
+            copyFileNameWithoutExt.Click += async (_, e) =>
+            {
+                var fileName = Path.GetFileNameWithoutExtension(change.Path);
+                await App.CopyTextAsync(fileName);
+                e.Handled = true;
+            };
+
             var menu = new ContextMenu();
             menu.Items.Add(openWithMerger);
             menu.Items.Add(explore);
@@ -299,6 +319,9 @@ namespace SourceGit.ViewModels
             menu.Items.Add(new MenuItem { Header = "-" });
             menu.Items.Add(copyPath);
             menu.Items.Add(copyFullPath);
+            menu.Items.Add(new MenuItem { Header = "-" });
+            menu.Items.Add(copyFileName);
+            menu.Items.Add(copyFileNameWithoutExt);
 
             return menu;
         }

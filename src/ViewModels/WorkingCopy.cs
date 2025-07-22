@@ -1006,8 +1006,32 @@ namespace SourceGit.ViewModels
                     e.Handled = true;
                 };
 
+                var copyFileName = new MenuItem();
+                copyFileName.Header = App.Text("CopyFileName");
+                copyFileName.Icon = App.CreateMenuIcon("Icons.Copy");
+                copyFileName.Click += async (_, e) =>
+                {
+                    var fileName = hasSelectedFolder ? Path.GetFileName(selectedSingleFolder) : Path.GetFileName(change.Path);
+                    await App.CopyTextAsync(fileName);
+                    e.Handled = true;
+                };
+
+                var copyFileNameWithoutExt = new MenuItem();
+                copyFileNameWithoutExt.Header = App.Text("CopyFileNameWithoutExt");
+                copyFileNameWithoutExt.Icon = App.CreateMenuIcon("Icons.Copy");
+                copyFileNameWithoutExt.Click += async (_, e) =>
+                {
+                    var fileName = hasSelectedFolder ? Path.GetFileName(selectedSingleFolder) : Path.GetFileName(change.Path);
+                    var nameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
+                    await App.CopyTextAsync(nameWithoutExt);
+                    e.Handled = true;
+                };
+
                 menu.Items.Add(copy);
                 menu.Items.Add(copyFullPath);
+                menu.Items.Add(new MenuItem { Header = "-" });
+                menu.Items.Add(copyFileName);
+                menu.Items.Add(copyFileNameWithoutExt);
             }
             else
             {
@@ -1187,12 +1211,33 @@ namespace SourceGit.ViewModels
                     };
 
                     var copyFullPath = new MenuItem();
-                    copyFullPath.Header = App.Text("CopyPath");
+                    copyFullPath.Header = App.Text("CopyFullPath");
                     copyFullPath.Icon = App.CreateMenuIcon("Icons.Copy");
                     copyFullPath.Tag = OperatingSystem.IsMacOS() ? "⌘+⇧+C" : "Ctrl+Shift+C";
                     copyFullPath.Click += async (_, e) =>
                     {
                         await App.CopyTextAsync(Native.OS.GetAbsPath(_repo.FullPath, selectedSingleFolder));
+                        e.Handled = true;
+                    };
+
+                    var copyFileName = new MenuItem();
+                    copyFileName.Header = App.Text("CopyFileName");
+                    copyFileName.Icon = App.CreateMenuIcon("Icons.Copy");
+                    copyFileName.Click += async (_, e) =>
+                    {
+                        var fileName = Path.GetFileName(selectedSingleFolder);
+                        await App.CopyTextAsync(fileName);
+                        e.Handled = true;
+                    };
+
+                    var copyFileNameWithoutExt = new MenuItem();
+                    copyFileNameWithoutExt.Header = App.Text("CopyFileNameWithoutExt");
+                    copyFileNameWithoutExt.Icon = App.CreateMenuIcon("Icons.Copy");
+                    copyFileNameWithoutExt.Click += async (_, e) =>
+                    {
+                        var fileName = Path.GetFileName(selectedSingleFolder);
+                        var nameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
+                        await App.CopyTextAsync(nameWithoutExt);
                         e.Handled = true;
                     };
 
@@ -1203,6 +1248,9 @@ namespace SourceGit.ViewModels
                     menu.Items.Add(new MenuItem() { Header = "-" });
                     menu.Items.Add(copy);
                     menu.Items.Add(copyFullPath);
+                    menu.Items.Add(new MenuItem { Header = "-" });
+                    menu.Items.Add(copyFileName);
+                    menu.Items.Add(copyFileNameWithoutExt);
                 }
             }
 
@@ -1482,8 +1530,32 @@ namespace SourceGit.ViewModels
                     e.Handled = true;
                 };
 
+                var copyFileName = new MenuItem();
+                copyFileName.Header = App.Text("CopyFileName");
+                copyFileName.Icon = App.CreateMenuIcon("Icons.Copy");
+                copyFileName.Click += async (_, e) =>
+                {
+                    var fileName = hasSelectedFolder ? Path.GetFileName(selectedSingleFolder) : Path.GetFileName(change.Path);
+                    await App.CopyTextAsync(fileName);
+                    e.Handled = true;
+                };
+
+                var copyFileNameWithoutExt = new MenuItem();
+                copyFileNameWithoutExt.Header = App.Text("CopyFileNameWithoutExt");
+                copyFileNameWithoutExt.Icon = App.CreateMenuIcon("Icons.Copy");
+                copyFileNameWithoutExt.Click += async (_, e) =>
+                {
+                    var fileName = hasSelectedFolder ? Path.GetFileName(selectedSingleFolder) : Path.GetFileName(change.Path);
+                    var nameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
+                    await App.CopyTextAsync(nameWithoutExt);
+                    e.Handled = true;
+                };
+
                 menu.Items.Add(copyPath);
                 menu.Items.Add(copyFullPath);
+                menu.Items.Add(new MenuItem { Header = "-" });
+                menu.Items.Add(copyFileName);
+                menu.Items.Add(copyFileNameWithoutExt);
             }
             else
             {
@@ -1591,11 +1663,35 @@ namespace SourceGit.ViewModels
                         e.Handled = true;
                     };
 
+                    var copyFileName = new MenuItem();
+                    copyFileName.Header = App.Text("CopyFileName");
+                    copyFileName.Icon = App.CreateMenuIcon("Icons.Copy");
+                    copyFileName.Click += async (_, e) =>
+                    {
+                        var fileName = Path.GetFileName(selectedSingleFolder);
+                        await App.CopyTextAsync(fileName);
+                        e.Handled = true;
+                    };
+
+                    var copyFileNameWithoutExt = new MenuItem();
+                    copyFileNameWithoutExt.Header = App.Text("CopyFileNameWithoutExt");
+                    copyFileNameWithoutExt.Icon = App.CreateMenuIcon("Icons.Copy");
+                    copyFileNameWithoutExt.Click += async (_, e) =>
+                    {
+                        var fileName = Path.GetFileName(selectedSingleFolder);
+                        var nameWithoutExt = Path.GetFileNameWithoutExtension(fileName);
+                        await App.CopyTextAsync(nameWithoutExt);
+                        e.Handled = true;
+                    };
+
                     menu.Items.Add(new MenuItem() { Header = "-" });
                     menu.Items.Add(history);
                     menu.Items.Add(new MenuItem() { Header = "-" });
                     menu.Items.Add(copyPath);
                     menu.Items.Add(copyFullPath);
+                    menu.Items.Add(new MenuItem { Header = "-" });
+                    menu.Items.Add(copyFileName);
+                    menu.Items.Add(copyFileNameWithoutExt);
                 }
             }
 

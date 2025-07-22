@@ -180,6 +180,8 @@
   <x:String x:Key="Text.ConventionalCommit.Type" xml:space="preserve">மாற்ற வகை:</x:String>
   <x:String x:Key="Text.Copy" xml:space="preserve">நகல்</x:String>
   <x:String x:Key="Text.CopyAllText" xml:space="preserve">அனைத்து உரையையும் நகலெடு</x:String>
+  <x:String x:Key="Text.CopyFileName" xml:space="preserve">கோப்பு பெயரை நகலெடு</x:String>
+  <x:String x:Key="Text.CopyFileNameWithoutExt" xml:space="preserve">கோப்பு பெயரை நகலெடு (நீட்டிப்பு இல்லாமல்)</x:String>
   <x:String x:Key="Text.CopyFullPath" xml:space="preserve">முழு பாதையை நகலெடு</x:String>
   <x:String x:Key="Text.CopyPath" xml:space="preserve">நகல் பாதை</x:String>
   <x:String x:Key="Text.CreateBranch" xml:space="preserve">கிளையை உருவாக்கு...</x:String>

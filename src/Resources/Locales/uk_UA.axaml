@@ -185,6 +185,8 @@
   <x:String x:Key="Text.ConventionalCommit.Type" xml:space="preserve">Тип зміни:</x:String>
   <x:String x:Key="Text.Copy" xml:space="preserve">Копіювати</x:String>
   <x:String x:Key="Text.CopyAllText" xml:space="preserve">Копіювати весь текст</x:String>
+  <x:String x:Key="Text.CopyFileName" xml:space="preserve">Копіювати ім'я файлу</x:String>
+  <x:String x:Key="Text.CopyFileNameWithoutExt" xml:space="preserve">Копіювати ім'я файлу (без розширення)</x:String>
   <x:String x:Key="Text.CopyFullPath" xml:space="preserve">Копіювати повний шлях</x:String>
   <x:String x:Key="Text.CopyPath" xml:space="preserve">Копіювати шлях</x:String>
   <x:String x:Key="Text.CreateBranch" xml:space="preserve">Створити гілку...</x:String>

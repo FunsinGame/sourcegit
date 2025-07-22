@@ -188,6 +188,28 @@ namespace SourceGit.ViewModels
             };
             menu.Items.Add(copyFullPath);
 
+            var copyFileName = new MenuItem();
+            copyFileName.Header = App.Text("CopyFileName");
+            copyFileName.Icon = App.CreateMenuIcon("Icons.Copy");
+            copyFileName.Click += async (_, e) =>
+            {
+                var fileName = Path.GetFileName(change.Path);
+                await App.CopyTextAsync(fileName);
+                e.Handled = true;
+            };
+            menu.Items.Add(copyFileName);
+
+            var copyFileNameWithoutExt = new MenuItem();
+            copyFileNameWithoutExt.Header = App.Text("CopyFileNameWithoutExt");
+            copyFileNameWithoutExt.Icon = App.CreateMenuIcon("Icons.Copy");
+            copyFileNameWithoutExt.Click += async (_, e) =>
+            {
+                var fileName = Path.GetFileNameWithoutExtension(change.Path);
+                await App.CopyTextAsync(fileName);
+                e.Handled = true;
+            };
+            menu.Items.Add(copyFileNameWithoutExt);
+
             return menu;
         }
 
