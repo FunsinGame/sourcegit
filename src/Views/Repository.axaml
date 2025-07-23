@@ -412,7 +412,7 @@
       </Grid>
 
       <!-- Commit Search Panel -->
-      <Grid Grid.Row="1" RowDefinitions="Auto,26,*" Margin="8,0,4,8" IsVisible="{Binding IsSearching}" PropertyChanged="OnSearchCommitPanelPropertyChanged">
+      <Grid Grid.Row="1" RowDefinitions="Auto,26,Auto,*" Margin="8,0,4,8" IsVisible="{Binding IsSearching}" PropertyChanged="OnSearchCommitPanelPropertyChanged">
         <!-- Search Input Box -->
         <Grid Grid.Row="0" Height="26" Margin="0,4,0,0">
           <TextBox x:Name="TxtSearchCommitsBox"
@@ -528,21 +528,33 @@
                     IsVisible="{Binding SearchCommitFilterType, Converter={x:Static c:IntConverters.IsGreaterThanZero}}">
             <TextBlock Text="{DynamicResource Text.Repository.Search.InCurrentBranch}"/>
           </CheckBox>
+        </StackPanel>
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" Margin="0,4,0,0"
+                     IsVisible="{Binding ShowByFileNamePanel}">
+          <Grid Height="24" VerticalAlignment="Center">
+            <TextBlock VerticalAlignment="Center"
+                       Foreground="{DynamicResource Brush.FG2}"
+                       FontSize="12">
+              <Run Text="{DynamicResource Text.Repository.Search.LastFilterDate}"/>
+              <Run Text="{Binding LastSearchedCommitDate, StringFormat='{}{0:yyyy-MM-dd HH:mm:ss}', TargetNullValue='No Filter'}" FontWeight="Bold"/>
+            </TextBlock>
+          </Grid>
 
           <Button Height="24"
-                   Margin="12,0,0,0"
-                   Padding="8,0"
-                   Background="Transparent"
-                   BorderThickness="1"
-                   BorderBrush="{DynamicResource Brush.Border2}"
-                   CornerRadius="4"
-                   Command="{Binding ContinueFileNameSearchCommand}"
-                   IsVisible="{Binding CanContinueFileNameSearch}">
+                  Margin="12,0,0,0"
+                  Padding="8,0"
+                  Background="Transparent"
+                  BorderThickness="1"
+                  BorderBrush="{DynamicResource Brush.Border2}"
+                  CornerRadius="4"
+                  Command="{Binding ContinueFileNameSearchCommand}"
+                  IsVisible="{Binding ShowByFileNamePanel}">
             <TextBlock Text="{DynamicResource Text.Repository.Search.ContinueFindByFileName}" FontSize="12"/>
           </Button>
         </StackPanel>
 
-        <ListBox Grid.Row="2"
+        <ListBox Grid.Row="3"
                  Margin="0,8,0,0"
                  Padding="4"
                  ItemsSource="{Binding SearchedCommits}"
@@ -592,7 +604,7 @@
           </ListBox.ItemTemplate>
         </ListBox>
 
-        <Path Grid.Row="2"
+        <Path Grid.Row="3"
               HorizontalAlignment="Center" VerticalAlignment="Center"
               Width="48" Height="48"
               Data="{StaticResource Icons.Empty}"
@@ -605,7 +617,7 @@
           </Path.IsVisible>
         </Path>
 
-        <v:LoadingIcon Grid.Row="2"
+        <v:LoadingIcon Grid.Row="3"
                        Width="48" Height="48"
                        HorizontalAlignment="Center" VerticalAlignment="Center"
                        IsVisible="{Binding IsSearchLoadingVisible}"/>

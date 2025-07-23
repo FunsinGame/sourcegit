@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -16,8 +16,11 @@ namespace SourceGit.Commands
         private string _fileNameFilter = string.Empty;
         private Models.CommitSearchMethod _method;
         private int _totalLogCount = 0; // 记录原始查询的日志数量
+        private DateTime _lastLogTime;  
 
         public int TotalLogCount => _totalLogCount;
+
+        public DateTime LastLogTime => _lastLogTime;
 
         public QueryCommits(string repo, string limits, bool needFindHead = true)
         {
@@ -239,6 +242,7 @@ namespace SourceGit.Commands
             if (currentCommit != null && hasMatchingFile)
                 commits.Add(currentCommit);
 
+            _lastLogTime = DateTime.UnixEpoch.AddSeconds(currentCommit.CommitterTime).ToLocalTime();
             return commits;
         }
     }

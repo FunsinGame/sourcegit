@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -313,10 +313,30 @@ namespace SourceGit.ViewModels
             }
         }
 
+        public bool ShowByFileNamePanel
+        {
+            get => _showByFileNamePanel;
+            private set
+            {
+                SetProperty(ref _showByFileNamePanel, value);
+                CanContinueFileNameSearch = false;
+                LastSearchedCommitDate = null;
+            }
+        }
+
         public bool CanContinueFileNameSearch
         {
             get => _canContinueFileNameSearch;
-            private set => SetProperty(ref _canContinueFileNameSearch, value);
+            private set
+            {
+                SetProperty(ref _canContinueFileNameSearch, value);
+            }
+        }
+
+        public DateTime? LastSearchedCommitDate
+        {
+            get => _lastSearchedCommitDate;
+            set => SetProperty(ref _lastSearchedCommitDate, value);
         }
 
         public int SearchCommitFilterType
@@ -330,7 +350,11 @@ namespace SourceGit.ViewModels
                     if (value != (int)Models.CommitSearchMethod.ByFileName)
                     {
                         _fileNameSearchSkip = 0;
-                        CanContinueFileNameSearch = false;
+                        ShowByFileNamePanel = false;
+                    }
+                    else
+                    {
+                        ShowByFileNamePanel = true;
                     }
                     
                     CalcWorktreeFilesForSearching();
@@ -988,6 +1012,8 @@ namespace SourceGit.ViewModels
                     {
                         SearchedCommits = visible;
                         IsSearchLoadingVisible = false;
+
+                        LastSearchedCommitDate = queryCommits.LastLogTime;
                         
                         // 如果是byFileName搜索且原始查询返回了1000条日志，说明可能还有更多
                         if (method == Models.CommitSearchMethod.ByFileName && queryCommits.TotalLogCount >= 1000)
@@ -1021,6 +1047,7 @@ namespace SourceGit.ViewModels
                     SearchedCommits = allCommits;
 
                     IsSearchLoadingVisible = false;
+                    LastSearchedCommitDate = queryCommits.LastLogTime;
 
                     // 如果原始查询返回的日志少于1000条，说明已经到达末尾
                     if (queryCommits.TotalLogCount < 1000)
@@ -3280,5 +3307,7 @@ namespace SourceGit.ViewModels
         private bool _isBisectCommandRunning = false;
 
         private string _navigateToCommitDelayed = string.Empty;
+        private DateTime? _lastSearchedCommitDate;
+        private bool _showByFileNamePanel;
     }
 }
